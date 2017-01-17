@@ -5,26 +5,31 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
-import com.github.kunai.entries.KunaiException;
+import com.github.kunai.KunaiException;
 
 public class DefaultDataSourceFactory extends DataSourceFactory{
-    public DefaultDataSourceFactory(){
-    }
-
     public DataSource build(Path path) throws KunaiException{
         String fileName = getFileName(path);
-        if(fileName.endsWith(".jar")){
-            try {
-                ClassLoader loader = getClass().getClassLoader();
-                FileSystem system = FileSystems.newFileSystem(path, loader);
-                return new DefaultDataSource(system);
-            } catch (IOException e) {
-            }
-        }
+        if(Files.isDirectory(path))
+            return new DirectoryDataSource(path);
+        if(fileName.endsWith(".jar") || fileName.endsWith(".war"))
+            return buildJar(path);
+        if(fileName.endsWith(".class"))
+            return new FileDataSource(path);
+        throw new UnsupportedDataSourceException(path + ": not found");
+    }
 
-        throw new UnsupportedDataSourceException(path.toString());
+    private DataSource buildJar(Path path) throws KunaiException{
+        try {
+            ClassLoader loader = getClass().getClassLoader();
+            FileSystem system = FileSystems.newFileSystem(path, loader);
+            return new FileSystemDataSource(system);
+        } catch (IOException e) {
+            throw new KunaiException(e.getMessage());
+        }
     }
 
     public DataSource build(File file) throws KunaiException{
@@ -34,7 +39,7 @@ public class DefaultDataSourceFactory extends DataSourceFactory{
     public DataSource build(URI uri) throws KunaiException{
         FileSystem system = FileSystems.getFileSystem(uri);
 
-        return new DefaultDataSource(system);
+        return new FileSystemDataSource(system);
     }
 
     private String getFileName(Path path){
