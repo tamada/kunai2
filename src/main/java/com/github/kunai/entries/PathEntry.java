@@ -2,38 +2,51 @@ package com.github.kunai.entries;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.nio.file.Path;
 
-import com.github.kunai.source.DefaultDataSource;
+import com.github.kunai.source.DataSource;
 
 public class PathEntry implements Entry{
     private Path path;
-    private DefaultDataSource source;
+    private DataSource source;
 
-    public PathEntry(Path path, DefaultDataSource source){
+    public PathEntry(Path path, DataSource source){
         this.path = path;
         this.source = source;
     }
 
     @Override
-    public InputStream getInputStream() throws IOException{
-        return source.openStream(path);
+    public InputStream openStream() throws IOException{
+        return path.toUri()
+                .toURL().openStream();
+    }
+
+    public DataSource source(){
+        return source;
     }
 
     @Override
-    public ClassName getClassName() {
+    public ClassName className() {
         return ClassName.parse(path);
     }
 
-    public boolean isName(String name){
-        return isName(new Name(name));
+    boolean startsWith(Path other){
+        return path.startsWith(other);
     }
 
+    @Override
     public boolean isName(Name name){
         return path.endsWith(name.toString());
     }
 
+    @Override
     public String toString(){
         return path.toAbsolutePath().toString();
+    }
+
+    @Override
+    public URI toUri(){
+        return path.toUri();
     }
 }

@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 
 import com.github.kunai.entries.Entry;
+import com.github.kunai.entries.Name;
 import com.github.kunai.source.DataSource;
 import com.github.kunai.source.DataSourceFactory;
 import com.github.kunai.source.DefaultDataSourceFactory;
@@ -29,16 +30,15 @@ public class Main {
         DataSource source = factory.build(path);
 
         System.out.println(path);
-        source.stream().peek(entry -> {
-            System.out.println(entry);
-        })
-        .filter(entry -> entry.isName("MANIFEST.MF"))
+        System.out.println(source);
+        source.stream().peek(entry -> System.out.println(entry))
+        .filter(entry -> entry.isName(new Name("MANIFEST.MF")))
         .forEach(entry -> showContent(entry));
     }
 
     private void showContent(Entry entry){
         System.out.println(entry);
-        try(BufferedReader in = new BufferedReader(new InputStreamReader(entry.getInputStream()))){
+        try(BufferedReader in = new BufferedReader(new InputStreamReader(entry.openStream()))){
             in.lines().forEach(System.out::println);
 
         } catch (IOException e) {

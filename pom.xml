@@ -14,7 +14,7 @@
     <dependency>
       <groupId>org.ow2.asm</groupId>
       <artifactId>asm</artifactId>
-      <version>5.0.4</version>
+      <version>5.1</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -31,7 +31,7 @@
   </dependencies>
 
   <build>
-   <sourceDirectory>src/main/java</sourceDirectory>
+    <sourceDirectory>src/main/java</sourceDirectory>
 
     <resources>
       <resource>
@@ -77,6 +77,15 @@
             <version>0.4.1</version>
           </dependency>
         </dependencies>
+      </plugin>
+
+      <plugin>
+        <groupId>org.eluder.coveralls</groupId>
+        <artifactId>coveralls-maven-plugin</artifactId>
+        <version>4.2.0</version>
+        <configuration>
+          <sourceEncoding>utf-8</sourceEncoding>
+        </configuration>
       </plugin>
 
       <plugin>
@@ -172,7 +181,7 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.7.6.201602180812</version>
+        <version>0.7.7.201606060606</version>
         <executions>
           <execution>
             <id>prepare-agent</id>
@@ -210,11 +219,6 @@
         <version>2.8.1</version>
       </plugin>
 
-      <plugin>
-        <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.7.6.201602180812</version>
-      </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>findbugs-maven-plugin</artifactId>
